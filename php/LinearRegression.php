@@ -148,6 +148,9 @@
       return $this->meanY - ($this->getSlope() * $this->meanX);
     }
     
+    /*
+      get the y value for a value of x
+    */
     public function getY($x)
     {
       $y = $this->getSlope() * $x + $this->getIntercept();

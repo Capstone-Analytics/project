@@ -16,10 +16,10 @@
       $linearRegression->setSumX($row[LinearRegressionConstants::$SUM_X]);
       $linearRegression->setSumXSquared($row[LinearRegressionConstants::$SUM_X_SQUARED]);
       
-      $linearRegression->setMeanY($row[LinearRegressionConstants::$MEAN_X]);
-      $linearRegression->setStdDevY($row[LinearRegressionConstants::$STANDARD_DEV_X]);
-      $linearRegression->setSumY($row[LinearRegressionConstants::$SUM_X]);
-      $linearRegression->setSumYSquared($row[LinearRegressionConstants::$SUM_X_SQUARED]);
+      $linearRegression->setMeanY($row[LinearRegressionConstants::$MEAN_Y]);
+      $linearRegression->setStdDevY($row[LinearRegressionConstants::$STANDARD_DEV_Y]);
+      $linearRegression->setSumY($row[LinearRegressionConstants::$SUM_Y]);
+      $linearRegression->setSumYSquared($row[LinearRegressionConstants::$SUM_Y_SQUARED]);
       
       $linearRegression->setPsum($row[LinearRegressionConstants::$PSUM]);
       $linearRegression->setCount($row[LinearRegressionConstants::$COUNT]);
