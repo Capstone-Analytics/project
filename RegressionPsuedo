@@ -1,0 +1,120 @@
+int coefficientOne;
+int coefficientTwo;
+int coefficientThree;
+int coefficientFour;
+int playersStatOne;
+int playersStatTwo;
+int playersStatThree;
+int playersStatFour;
+int allPlayersSalary;
+int playersSalarySqaured;
+int playersSalaryStatOne;
+int playersSalaryStatTwo;
+int playersSalaryStatThree;
+int playersSalaryStatFour;
+int playersStatSquaredOne;
+int playersStatSquaredTwo;
+int playersStatSquaredThree;
+int playerStatSquaredFour;
+int alphaOne;
+int alphaTwo;
+int alphaThree;
+int alphaFour;
+int betaOne;
+int betaTwo;
+int betaThree;
+int betaFour;
+int fairmarketValueOne;
+int fairmarketValueTwo;
+int fairmarketValueThree;
+int fairmarketValueFour;
+int qualifiedAB = 502;
+int population;
+
+
+
+playersStatOne = sigmaGenerator (playersStatOne, playerStatUserOne, playerAB);
+playersStatTwo = sigmaGenerator (playersStatTwo, playerStatUserTwo, playerAB);
+playersStatThree = sigmaGenerator (playersStatThree, playerStatThree, playerAB);
+playersStatFour = sigmaGenerator(playersStatFour, playerStatFour, playerAB);
+	
+allPlayersSalary = sigmaGenerator (allPlayersSalary, playerSalary, playerAB);
+	
+playersSalaryStatOne = sigmaMultiplyGenerator (playersSalaryStatOne, playerSalary, playerStatUserOne, playerAB);
+playersSalaryStatTwo = sigmaMultiplyGenerator (playersSalaryStatTwo, playerSalary, playerStatUserTwo, playerAB);
+playersSalaryStatThree = sigmaMultiplyGenerator (playersSalaryStatThree, playerSalary, playerStatUserThree, playerAB);
+playersSalaryStatFour = sigmaMultiplyGenerator (playersSalaryStatFour, playerSalary, playerStatUserFour, playerAB);	
+
+playersStatSquaredOne = sigmaSquaredGenerator (playersStatSquaredOne, playerStatUserOne, playerAB);
+playersStatSquaredTwo = sigmaSquaredGenerator (playersStatSquaredTwo, playerStatUserTwo, playerAB);
+playersStatSquaredThree = sigmaSquaredGenerator (playersStatSquaredThree, playerStatUserThree, playerAB);
+playersStatSquaredFour = sigmaSquaredGenerator (playersStatSquaredFour, playerStatUserFour, playerAB);
+
+playersSalarySquared = sigmaSquaredGenerator (playersSalary, playerAB);
+
+alphaOne = alphaGenerator (allPlayersSalary, playersStatOne, playersStatSquaredOne, playersSalaryStatOne, population);
+alphaTwo = alphaGenerator (allPlayersSalary, playersStatTwo, playersStatSquaredTwo, playersSalaryStatTwo, population);
+alphaThree = alphaGenerator (allPlayersSalary, playersStatThree, playersStatSquaredThree, playersSalaryStatThree, population);
+alphaFour= alphaGenerator (allPlayersSalary, playersStatFour, playersStatSquaredFour, playersSalaryStatFour, population);
+
+betaOne = betaGenerator (allPlayersSalary, playersStatOne, playersStatSquaredOne, playersSalaryStatOne, population);
+betaTwo = betaGenerator (allPlayersSalary, playersStatTwo, playersStatSquaredTwo, playersSalaryStatTwo, population);
+betaThree = betaGenerator (allPlayersSalary, playersStatThree, playersStatSquaredThree, playersSalaryStatThree, population);
+betaFour= betaGenerator (allPlayersSalary, playersStatFour, playersStatSquaredFour, playersSalaryStatFour, population);
+
+fairmarketValueOne = fairmarketValue ( alphaOne,  betaOne, playerStatUserOne);
+fairmarketValueTwo = fairmarketValue ( alphaTwo,  betaTwo, playerStatUserTwo);
+fairmarketValueThree = fairmarketValue ( alphaThree,  betaThree, playerStatUserThree);
+fairmarketValueFour = fairmarketValue ( alphaFour,  betaFour, playerStatUserFour);
+
+totalFairmarketValue = (coefficientOne*fairmarketValueOne +
+coefficientTwo* fairmarketValueTwo+
+coefficientThree * fairmarketValueThree+
+coefficientFour * fairmarketValueFour);
+
+
+
+
+public int sigmaGenerator ( int sigmaTotal, int sigmaInput, intplayerAB)
+{
+	if(playerAB >= qualifiedAB)	
+		sigmaTotal = sigmaTotal +sigmaInput;
+	return sigmaTotal;
+}
+
+
+public int sigmaMultiplyGenerator ( int sigmaTotal, int sigmaInputSalary, , int sigmaInputStat int playerAB)
+{
+	if(playerAB >= qualifiedAB)	
+		sigmaTotal = sigmaTotal + (sigmaInputSalary * sigmaInputStat);
+	return sigmaTotal;
+}
+
+public int sigmaSquaredGenerator (int sigmaTotal, int sigmaInput, intplayerAB)
+{
+if(playerAB >= qualifiedAB)	
+		sigmaTotal = sigmaTotal + (sigmaInput*sigmaInput);
+	return sigmaTotal;
+}
+
+	public int alphaGenerator (int sigmaSalary, int sigmaStat, int sigmaStatSquare, int sigmaSalaryStat, int population)
+	{
+
+int alpha = ((sigmaSalary * sigmaStatSquare) –(sigmaStat * sigmaSalaryStat))/((population * sigmaStatSquare)-(sigmaStat*sigmaStat));
+
+return alpha;
+	}
+
+	public int betaGenerator (int sigmaSalary, int sigmaStat, int sigmaStatSquare, int sigmaSalaryStat, int population)
+	{
+
+int beta = ((population* sigmaSalaryStat)-(sigmaSalary*sigmaStat)) /((population * sigmaStatSquare)-(sigmaStat*sigmaStat));
+
+return beta;
+	}
+
+	public int fairmarketValue ( int alpha, int beta, int playerStat)
+	{
+		int fairmarketValue = alpha+ (beta * stat);
+		return fairmarketValue;
+	}
