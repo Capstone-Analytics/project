@@ -15,6 +15,10 @@
     private $joinX = array();
     private $joinY = array();
     
+    private $joinTables;
+    private $joinSql;
+    
+    private $greaterThan;
     private $sql;
     
     /*
@@ -43,6 +47,43 @@
       array_push($this->joinY, $joinY);
     }
     
+    /*
+      Inner Joins a custom table
+    */
+    public function addJoinThroughX($joinTable, $joinColumn, $joinX)
+    {
+      $this->joinTables .= "," . $joinTable;
+      $this->joinSql .= "and " . $joinTable . "." . $joinColumn . "= "
+        . "x." . $joinX ." ";
+    }
+    
+    /*
+      Adds Greater Than Criteria for a column in the X table
+    */
+    public function addGreaterThanX($column, $num)
+    {
+      $this->greaterThan .= " and x." . $column . " > " . $num;
+    }
+    
+    /*
+      Adds Greater Than Criteria for a column in the Y table
+    */
+    public function addGreaterThanY($column, $num)
+    {
+      $this->greaterThan .= " and y." . $column . " > " . $num;
+    }
+    
+    /*
+      Adds Greater Than Criteria for a custom join table
+    */
+    public function addGreaterThan($table, $column, $num)
+    {
+      $this->greaterThan .= " and " . $table . "." . $column . " > " . $num;
+    }
+    
+    /*
+      Builds the sql for linear regression data
+    */
     public function getLinearRegressionSql()
     {
       //use alias x for tableX and y for tableY
@@ -59,10 +100,15 @@
                    ", sum(x.$this->rowX * y.$this->rowY) as " . LinearRegressionConstants::$PSUM .
                    ", count(*) as " . LinearRegressionConstants::$COUNT .
                    
-                   " from $this->tableX x, $this->tableY y " .
-                   " where ";
-      
+                   " from $this->tableX x, $this->tableY y "; 
+                   
+      $this->sql .= $this->joinTables;
+      $this->sql .= " where ";
       $this->sql = $this->addJoins($this->sql);
+      $this->sql .= $this->joinSql;
+      $this->sql .= $this->greaterThan;
+      
+      $this->sql .= ";";
       
       return $this->sql;
     }
@@ -82,6 +128,8 @@
                     " where master.playerID = x.playerID and";
                     
       $playerSql = $this->addJoins($playerSql);
+      $playerSql .= $this->greaterThan;
+      $playerSql .= ";";
       
       return $playerSql;
     }
@@ -100,9 +148,7 @@
       //Trim the extra "and"
       $length = strlen($sql);
       $sql = substr($sql, 0, $length-3);
-      
-      $sql .= ";";
-      
+
       return $sql;
     }
   }

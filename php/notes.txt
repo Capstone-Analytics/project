@@ -1,7 +1,0 @@
-These are some classes to go from desired columns to linear regression equation plus player data points.
-
-The test.php has an example pull using home runs and salary
-
-The next todo is to tie it into the html screen and add additional filtering options on the screen and in the LinearRegressionCriteria so we can narrow down results (ex only players with >100 games or >350 at bats)
-
-I set up a local database using phpmyadmin and the trimmed sql files that I committed here earlier

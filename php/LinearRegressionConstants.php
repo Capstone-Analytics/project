@@ -1,5 +1,4 @@
 <?php  
-
   class LinearRegressionConstants
   {
     //Column Names

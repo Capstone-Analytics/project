@@ -46,10 +46,10 @@
         
         $pdp->setExpectedY($linearRegression->getY($pdp->getXValue()));
         
+        
         array_push($pdpArray, $pdp);
       }
      
       return $pdpArray;
     }
-
 ?>

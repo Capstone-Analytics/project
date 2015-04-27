@@ -1,5 +1,8 @@
 <?php
 
+/*
+
+*/
 Class PlayerDataPoint
 {
   private $playerId;
@@ -44,12 +47,12 @@ Class PlayerDataPoint
   
   public function getExpectedX()
   {
-    return $this->x;
+    return $this->expectedY;
   }
   
   public function getExpectedY()
   {
-    return $this->y;
+    return $this->expectedY;
   }
   
   public function getDifferenceX()

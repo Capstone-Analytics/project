@@ -1,0 +1,18 @@
+I went through locally and trimmed the database up.I started with the salaries table and dropped everything that wasn't 2014. From there I dropped any records for players without a salary and any records that were before 2014.
+
+ex)
+--Batting SQL
+delete from batting where yearId != '2014';
+delete from batting where playerId not in (select playerId from salaries);
+
+/*
+  Tables
+  
+  salaries.sql
+  master.sql
+  batting.sql
+  fielding.sql
+  pitching.sql
+  appearances.sql
+  teams.sql
+*/
