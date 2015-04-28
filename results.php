@@ -39,6 +39,7 @@
 
   //Get the player sql from the sql criteria
   $playerSql = $test->getPlayerDataPointSql();
+  //print($playerSql);
 
   //Get the results and turn them into PlayerDataPoint Objects
   $result = $conn->query($playerSql);

@@ -12,14 +12,10 @@
     private $rowX;
     private $rowY;
     
-    private $joinX = array();
-    private $joinY = array();
-    
     private $joinTables;
+    private $playerJoinTables;
     private $joinSql;
-    
     private $greaterThan;
-    private $sql;
     
     /*
       Constructor
@@ -43,18 +39,36 @@
     */
     public function addInnerJoin($joinX, $joinY)
     {
+      $this->joinSql .= " x." . $joinX . " = y." . $joinY . " and ";
+
+      /*      
       array_push($this->joinX, $joinX);
       array_push($this->joinY, $joinY);
+      */
     }
     
     /*
-      Inner Joins a custom table
+      Inner Joins a custom table through the X table
     */
     public function addJoinThroughX($joinTable, $joinColumn, $joinX)
     {
       $this->joinTables .= "," . $joinTable;
-      $this->joinSql .= "and " . $joinTable . "." . $joinColumn . "= "
-        . "x." . $joinX ." ";
+      if ($joinTable != "master")
+      {
+        $this->playerJoinTables .= "," . $joinTable;
+      }
+      $this->joinSql .= $joinTable . "." . $joinColumn . "= "
+        . "x." . $joinX ." and ";
+    }
+    
+    /*
+      Inner Joins a custom table through the Y table
+    */
+    public function addJoinThroughY($joinTable, $joinColumn, $joinY)
+    {
+      $this->joinTables .= "," . $joinTable;
+      $this->joinSql .= $joinTable . "." . $joinColumn . "= "
+        . "y." . $joinY ." and ";
     }
     
     /*
@@ -62,7 +76,7 @@
     */
     public function addGreaterThanX($column, $num)
     {
-      $this->greaterThan .= " and x." . $column . " > " . $num;
+      $this->greaterThan .= " x." . $column . " > " . $num . " and ";
     }
     
     /*
@@ -70,7 +84,7 @@
     */
     public function addGreaterThanY($column, $num)
     {
-      $this->greaterThan .= " and y." . $column . " > " . $num;
+      $this->greaterThan .= " y." . $column . " > " . $num . " and ";
     }
     
     /*
@@ -78,7 +92,7 @@
     */
     public function addGreaterThan($table, $column, $num)
     {
-      $this->greaterThan .= " and " . $table . "." . $column . " > " . $num;
+      $this->greaterThan .= $table . "." . $column . " > " . $num . " and ";
     }
     
     /*
@@ -87,7 +101,7 @@
     public function getLinearRegressionSql()
     {
       //use alias x for tableX and y for tableY
-      $this->sql = "select avg(x.$this->rowX) as " . LinearRegressionConstants::$MEAN_X .
+      $sql = "select avg(x.$this->rowX) as " . LinearRegressionConstants::$MEAN_X .
                    ", stddev(x.$this->rowX) as " . LinearRegressionConstants::$STANDARD_DEV_X .
                    ", sum(x.$this->rowX) as " . LinearRegressionConstants::$SUM_X .
                    ", sum(x.$this->rowX * x.$this->rowX) as " . LinearRegressionConstants::$SUM_X_SQUARED .
@@ -102,15 +116,17 @@
                    
                    " from $this->tableX x, $this->tableY y "; 
                    
-      $this->sql .= $this->joinTables;
-      $this->sql .= " where ";
-      $this->sql = $this->addJoins($this->sql);
-      $this->sql .= $this->joinSql;
-      $this->sql .= $this->greaterThan;
+      $sql .= $this->joinTables;
+      $sql .= " where ";
+      $sql .= $this->joinSql;
+      $sql .= $this->greaterThan;
       
-      $this->sql .= ";";
+      //Trim the extra "and"
+      $length = strlen($sql);
+      $sql = substr($sql, 0, $length-4);
+      $sql .= ";";
       
-      return $this->sql;
+      return $sql;
     }
     
     /*
@@ -124,32 +140,19 @@
                     ", master.nameFirst as " . PlayerDataPointConstants::$FIRST_NAME .
                     ", x.$this->rowX as " . PlayerDataPointConstants::$X_VALUE .
                     ", y.$this->rowY as " . PlayerDataPointConstants::$Y_VALUE .
-                    " from $this->tableX x, $this->tableY y, master " . 
-                    " where master.playerID = x.playerID and";
+                    " from $this->tableX x, $this->tableY y, master "; 
                     
-      $playerSql = $this->addJoins($playerSql);
+      $playerSql .= $this->playerJoinTables;
+      $playerSql .= " where x.playerID = master.playerID and ";
+      $playerSql .= $this->joinSql;
       $playerSql .= $this->greaterThan;
+      
+      //Trim the extra "and"
+      $length = strlen($playerSql);
+      $playerSql = substr($playerSql, 0, $length-4);
       $playerSql .= ";";
       
       return $playerSql;
-    }
-    
-    //Utility function to add joins to a sql statement
-    private function addJoins($sql)
-    {
-     //Add the joins
-      for ($i=0; $i < count($this->joinX); $i++)
-      {
-          $colX = $this->joinX[$i];
-          $colY = $this->joinY[$i];
-          $sql .= " x.$colX = y.$colY and";
-      }
-      
-      //Trim the extra "and"
-      $length = strlen($sql);
-      $sql = substr($sql, 0, $length-3);
-
-      return $sql;
     }
   }
 ?>
