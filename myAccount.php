@@ -1,9 +1,11 @@
-<?php include("php/ConnectionUtils.php")?>
-<?php include("templates/header.html")?>
+<?php 
+  include("secureCheck.php");
+  include("php/ConnectionUtils.php");
+  include("templates/header.html");
+?>
 <div id='container'>
   <div id='row'>
     <?php include("templates/sidenav.php") ?>
-    <?php include("secureCheck.php") ?>
     <div id='content'>
     <?php
       if ($_SERVER['REQUEST_METHOD'] == 'POST') 
@@ -56,7 +58,7 @@
   */
   function validatePassword($username, $password, $dbc)
   {
-    $sql = "SELECT * FROM USERS WHERE USERNAME ='$username' AND PASSWORD=" .
+    $sql = "SELECT * FROM users WHERE USERNAME ='$username' AND PASSWORD=" .
         "SHA('" . $password . "')";
     $result = $dbc->query($sql);
     while ($row = $result->fetch_assoc())
@@ -74,7 +76,7 @@
   */
   function updatePassword($username, $password, $dbc)
   {
-    $sql = "UPDATE USERS SET PASSWORD=SHA('$password') WHERE USERNAME = '$username'";
+    $sql = "UPDATE users SET PASSWORD=SHA('$password') WHERE USERNAME = '$username'";
     return ($dbc->query($sql));
   }
 ?>

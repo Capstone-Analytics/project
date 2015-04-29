@@ -1,5 +1,11 @@
 <?php include("templates/header.html") ?>
 <div id='container'>
+  <?php
+    if (isSet($_GET['message'])){
+      $message = $_GET['message'];
+      print"<p class='message'>$message</p>";
+    }
+  ?>
   <div id='row'>
     <?php include("templates/sidenav.php") ?>
     <div id='content'>

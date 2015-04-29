@@ -1,8 +1,8 @@
+<?php include("secureCheck.php") ?>
 <?php include("templates/header.html") ?>
   <div id='container'>
     <div id='row'>
       <?php include("templates/sidenav.php") ?>
-      <?php include("secureCheck.php") ?>
       <div id='content'>
         <h2 id='contentHeader'>Search By Statistics</h2>
         <form action="shopBatting.php" method="POST">
@@ -19,7 +19,7 @@
                   <option value="h">Hits</option>
                   <option value="hr">Home Runs</option>
                   <option value="2b">Doubles</option>
-                  <option value="3b">Triples</option>
+                  <!-- <option value="3b">Triples</option> -->
                 </select>
               </td>
               <td>
@@ -32,7 +32,7 @@
               <td>
                 <select name="sbMinBirthYear" style="width:100px">
                   <?php
-                    for ($var = 1970; $var <  1998; $var++)
+                    for ($var = 1970; $var < 1991; $var++)
                     {
                       print "<option value='$var'>$var</option>";
                     }
