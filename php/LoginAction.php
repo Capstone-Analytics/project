@@ -1,6 +1,14 @@
 <?php
   include ("ConnectionUtils.php");
   
+  /*
+    The Login Action will add the client to the session if their
+    username/password combination is correct or send them a 
+    message telling them no combination was found.
+    
+    @Requirement 3.2
+  */
+  
   if(!isSet($_SESSION)){
       session_start();
   }
@@ -18,7 +26,7 @@
     }
   }
     
-   /*
+  /*
     Searches for a user record matching the given
     $username/$password and add it to the session if true
     Otherwise returns false

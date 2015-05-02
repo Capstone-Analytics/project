@@ -4,6 +4,14 @@
   include_once "php/LinearRegression.php";
   include_once "php/PlayerDataPoint.php";
   include_once "php/ConnectionUtils.php";
+  
+  /*
+    The results provide up to the top 50 most
+    efficient players using the criteria from
+    the shopBatting screen
+    
+    @Requirement 3.4.3
+  */
 
   // Create connection
   $conn = getConnection();
@@ -13,21 +21,18 @@
     return;
   }
 
-  //Get the selected batting stat
-  if (isset($_POST['sbStatOptions'])) {
-    $stat = $_POST['sbStatOptions'];
-  }
-  
+  //Get the selected options
+  $stat = $_POST['sbStatOptions'];
   $minAB = $_POST['sbMinAtBats'];
   $minBirthYear = $_POST['sbMinBirthYear'];
   
   //get batting linear regression
   $test = new LinearRegressionCriteria("batting", $stat, "salaries", "salary");
-  $test->addInnerJoin("playerID", "playerID");
-  $test->addInnerJoin("teamID", "teamID");
-  $test->addJoinThroughX("master", "playerID", "playerID");
-  $test->addGreaterThanX("ab", $minAB );
-  $test->addGreaterThan("master", "birthYear", $minBirthYear);
+  $test->addJoin("batting", "playerID", "salaries", "playerID");
+  $test->addJoin("batting", "teamID", "salaries", "teamID");
+  $test->addJoin("master", "playerID", "batting", "playerID");
+  $test->addComparison("batting", "ab", $minAB, ">=");
+  $test->addComparison("master", "birthYear", $minBirthYear, "<=");
 
   //Get the sql statement from the sql criteria
   $sql = $test->getLinearRegressionSql();
@@ -56,7 +61,7 @@
 
   print "<h2>Top 50 Players</h2>";
   print "<table>";
-  print "<th>Player</th><th>Count</th><th>Salary</th><th>ExpectedSalary</th><th>Salary Difference</th>";
+  print "<th>Player</th><th>Count</th><th>Salary</th><th>Expected Salary</th><th>Salary Difference</th>";
   for ($i = 0; $i < 50 & $i< count($dataPoints); $i++)
   {
     $player = $dataPoints[$i];

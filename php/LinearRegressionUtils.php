@@ -6,6 +6,8 @@
     /*
       Takes a result row that utilizes the constant names
       and builds a LinearRegression object from it
+      
+      @Requirement 3.3.1
     */
     function rowToLinearRegression($row)
     {
@@ -30,6 +32,8 @@
     /*
       Takes rows that utilizes the constant names
       and builds an array of PlayerDataPoint Objects from them
+      
+      @Requirement 3.3.1
     */
     function rowsToPlayerDataPoints($result, $linearRegression)
     {
@@ -45,7 +49,6 @@
         $pdp->setYValue($row[PlayerDataPointConstants::$Y_VALUE]);
         
         $pdp->setExpectedY($linearRegression->getY($pdp->getXValue()));
-        
         
         array_push($pdpArray, $pdp);
       }

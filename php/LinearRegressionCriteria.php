@@ -4,6 +4,8 @@
   /*
     A Utility class for building SQL statements to harvest
     LinearRegression records/objects
+    
+    @Requirement 3.3.1
   */
   class LinearRegressionCriteria
   {
@@ -12,10 +14,13 @@
     private $rowX;
     private $rowY;
     
-    private $joinTables;
-    private $playerJoinTables;
+    private $jTables = array();
+    private $joinTablesSql;
     private $joinSql;
-    private $greaterThan;
+    
+    private $playerJoinTables = array("master");
+    private $playerJoinTablesSql;
+    private $comparisonSql;
     
     /*
       Constructor
@@ -30,69 +35,53 @@
       $this->rowY   = $rowY;
     }
     
-    /*
-      Adds an inner join tableX & tableY
-      ColumnX of (Table X) & ColumnY of (Table Y)
-      
-      Joining on multiple columns is allowed by calling
-      this method multiple times
-    */
-    public function addInnerJoin($joinX, $joinY)
+    /* Adds a join for two given tables on the left and right columns */
+    public function addJoin($tableLeft, $columnLeft, $tableRight, $columnRight)
     {
-      $this->joinSql .= " x." . $joinX . " = y." . $joinY . " and ";
-
-      /*      
-      array_push($this->joinX, $joinX);
-      array_push($this->joinY, $joinY);
-      */
+      $this->updateJoinTables($tableLeft);
+      $this->updateJoinTables($tableRight);
+      $this->joinSql .= $this->getTableAlias($tableLeft) . "." . $columnLeft . "= "
+      . $this->getTableAlias($tableRight) . "." . $columnRight ." and ";
     }
     
     /*
-      Inner Joins a custom table through the X table
+      Adds search criteria for a given table, column, value
+      and comparison 
     */
-    public function addJoinThroughX($joinTable, $joinColumn, $joinX)
+    public function addComparison($table, $column, $value, $comparison)
     {
-      $this->joinTables .= "," . $joinTable;
-      if ($joinTable != "master")
+      $this->comparisonSql .= $this->getTableAlias($table) . "." . $column . " $comparison " . $value . " and ";
+    }
+    
+    /*
+      If we have an existing alias for a given
+      table return that table alias
+    */
+    private function getTableAlias($tableName)
+    {
+      if ($tableName == $this->tableX) return "x";
+      if ($tableName == $this->tableY) return "y";
+      return $tableName;
+    }
+    
+    /* Updates the tables that need to be added to the query */
+    private function updateJoinTables($tableName)
+    {
+      if ($tableName != $this->tableX && $tableName != $this->tableY)
       {
-        $this->playerJoinTables .= "," . $joinTable;
+        //Update the join tables for linear regression sql
+        if (! in_array($tableName, $this->jTables))
+        {
+          array_push($this->jTables, $tableName);
+          $this->joinTablesSql .= "," . $tableName;
+        }
+        //Update the join tables for player data sql
+        if (! in_array($tableName, $this->playerJoinTables))
+        {
+          array_push($this->playerJoinTables, $tableName);
+          $this->playerJoinTablesSql .= "," . $tableName;
+        }
       }
-      $this->joinSql .= $joinTable . "." . $joinColumn . "= "
-        . "x." . $joinX ." and ";
-    }
-    
-    /*
-      Inner Joins a custom table through the Y table
-    */
-    public function addJoinThroughY($joinTable, $joinColumn, $joinY)
-    {
-      $this->joinTables .= "," . $joinTable;
-      $this->joinSql .= $joinTable . "." . $joinColumn . "= "
-        . "y." . $joinY ." and ";
-    }
-    
-    /*
-      Adds Greater Than Criteria for a column in the X table
-    */
-    public function addGreaterThanX($column, $num)
-    {
-      $this->greaterThan .= " x." . $column . " > " . $num . " and ";
-    }
-    
-    /*
-      Adds Greater Than Criteria for a column in the Y table
-    */
-    public function addGreaterThanY($column, $num)
-    {
-      $this->greaterThan .= " y." . $column . " > " . $num . " and ";
-    }
-    
-    /*
-      Adds Greater Than Criteria for a custom join table
-    */
-    public function addGreaterThan($table, $column, $num)
-    {
-      $this->greaterThan .= $table . "." . $column . " > " . $num . " and ";
     }
     
     /*
@@ -116,10 +105,10 @@
                    
                    " from $this->tableX x, $this->tableY y "; 
                    
-      $sql .= $this->joinTables;
+      $sql .= $this->joinTablesSql;
       $sql .= " where ";
       $sql .= $this->joinSql;
-      $sql .= $this->greaterThan;
+      $sql .= $this->comparisonSql;
       
       //Trim the extra "and"
       $length = strlen($sql);
@@ -131,7 +120,7 @@
     
     /*
       Builds and returns a sql statement to gather records for the PlayerDataPoints
-      associated with the LinearRegression
+      associated with the LinearRegression.
     */
     public function getPlayerDataPointSql()
     {
@@ -142,10 +131,10 @@
                     ", y.$this->rowY as " . PlayerDataPointConstants::$Y_VALUE .
                     " from $this->tableX x, $this->tableY y, master "; 
                     
-      $playerSql .= $this->playerJoinTables;
+      $playerSql .= $this->playerJoinTablesSql;
       $playerSql .= " where x.playerID = master.playerID and ";
       $playerSql .= $this->joinSql;
-      $playerSql .= $this->greaterThan;
+      $playerSql .= $this->comparisonSql;
       
       //Trim the extra "and"
       $length = strlen($playerSql);

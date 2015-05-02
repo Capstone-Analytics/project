@@ -1,4 +1,8 @@
 <?php
+  /*
+    Returns a connection to the database
+    @Requirement 3.1
+  */
   function getConnection()
   {
     $servername = "localhost";
