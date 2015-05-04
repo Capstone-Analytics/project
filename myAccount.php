@@ -2,6 +2,15 @@
   include("secureCheck.php");
   include("php/ConnectionUtils.php");
   include("templates/header.html");
+  
+  /*  
+    The My Account Screen allows the user to modify
+    information tied to their account. At this point
+    in time that consists only of their username and
+    password
+    
+    @Requirement 3.2
+  */
 ?>
 <div id='container'>
   <div id='row'>

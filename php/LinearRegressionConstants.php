@@ -1,4 +1,11 @@
 <?php  
+  /*
+    Holds column names that can be used to retrieve 
+    values from a database and later transform those
+    records in to LinearRegression Objects
+    
+    @Requirement 3.3.1
+  */
   class LinearRegressionConstants
   {
     //Column Names
@@ -15,6 +22,13 @@
     static $COUNT = "n";
   }
   
+  /*
+    Holds column names that can be used to retrieve 
+    values from a database and later transform those
+    records in to PlayerDataPoint Objects
+    
+    @Requirement 3.3.1
+  */
   class PlayerDataPointConstants
   {
     static $PLAYER_ID = "playerId";
